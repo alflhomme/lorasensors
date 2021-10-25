@@ -60,7 +60,6 @@ function main()
 	baudrate = parsed_args["baudrate"]
 	portname = parsed_args["portname"]
 
-	header = ["rssi", "period", "temperature", "humidity"]
 	while true
 		datapacket = retrieve_serial_data(portname, baudrate)
 		println("Got a data packet:")
