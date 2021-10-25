@@ -11,17 +11,17 @@ function parse_commandline()
 		s.usage = "Usage: julia serialpacketrec.jl portname baudrate path"
 
     @add_arg_table! s begin
-				"--path", "-p"
-					help = "Path to save the data."
-					arg_type = String
-					required = false
-					default = string(pwd(), "/", Dates.today(), "_serialdata.txt")
+		"--path", "-p"
+			help = "Path to save the data."
+			arg_type = String
+			required = false
+			default = string(pwd(), "/", Dates.today(), "_serialdata.txt")
 
-				"--baudrate", "-b"
-					help = "Baudrate. Default = 115200."
-					arg_type = Int64
-					required = false
-					default = 115200
+		"--baudrate", "-b"
+			help = "Baudrate. Default = 115200."
+			arg_type = Int64
+			required = false
+			default = 115200
 
         "portname"
         	help = "Portname used for serial communication."

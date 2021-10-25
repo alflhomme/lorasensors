@@ -1,29 +1,9 @@
 module SensorsController
 
-  using LibSerialPort
   using CSV
   using Plots
 
-
-  function retrieve_serial_data(portname::String, baudrate::Int64)
-    mcu_message = ""
-    LibSerialPort.open(portname, baudrate) do sp
-      while true
-        if bytesavailable(sp) > 0
-          mcu_message *= String(read(sp))
-          #println(mcu_message)
-          return(mcu_message)
-        end
-      sleep(0.0001)
-      end
-    end
-  end
-
-
-  function write_data(data::String, path_to_datafile::String)
-    open(path_to_datafile, "a") do f
-      write(f, data)
-    end
+  function load_data(path_to_datafile::String)
   end
 
 
@@ -33,9 +13,7 @@ module SensorsController
 
 
   function main()
-    portname = "/dev/cu.usbmodem1442301"
-    baudrate = 115200
-    path_to_datafile = pwd()*"datapacket.txt"
+
     header = ["signal", "period", "temperature", "humidity"]
 
     datapacket = retrieve_serial_data(portname, baudrate)
