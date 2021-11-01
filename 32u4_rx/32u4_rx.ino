@@ -73,6 +73,11 @@ RH_RF95 rf95(RFM95_CS, RFM95_INT);
 // Blinky on receipt
 #define LED 13
 
+unsigned long tf;
+unsigned long ti;
+unsigned long period;
+float cumulative_time;
+
 void setup()
 {
   pinMode(LED, OUTPUT);
@@ -113,6 +118,9 @@ void setup()
   // If you are using RFM95/96/97/98 modules which uses the PA_BOOST transmitter pin, then
   // you can set transmitter powers from 5 to 23 dBm:
   rf95.setTxPower(23, false);
+
+  ti = 0;
+  cumulative_time = 0.;
 }
 
 void loop()
@@ -126,10 +134,20 @@ void loop()
     if (rf95.recv(buf, &len))
     {
       digitalWrite(LED, HIGH);
+      
+      // We compute the period between received measurements and cumulative time
+      tf = millis();
+      period = (tf - ti);
+      cumulative_time += (float)period / 3600000.; // sum over measurements' periods in hours
+      ti = tf;
+      
       //RH_RF95::printBuffer("Received: ", buf, len);
       //Serial.print("Got: ");
       // First column is the signal strength (RSSI)
       Serial.print(rf95.lastRssi(), DEC);
+      Serial.print("\t");
+      // Second column is cumulative time in hours
+      Serial.print(cumulative_time, 5);
       Serial.print("\t");
       Serial.print((char*)buf);
       Serial.print("\n");

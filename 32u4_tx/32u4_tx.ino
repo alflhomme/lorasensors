@@ -17,23 +17,23 @@
 
 
 #if defined(ESP8266)
-  /* for ESP w/featherwing */ 
+  /* for ESP w/featherwing */
   #define RFM95_CS  2    // "E"
   #define RFM95_RST 16   // "D"
   #define RFM95_INT 15   // "B"
 
-#elif defined(ESP32)  
+#elif defined(ESP32)
   /* ESP32 feather w/wing */
   #define RFM95_RST     27   // "A"
   #define RFM95_CS      33   // "B"
   #define RFM95_INT     12   //  next to A
 
-#elif defined(NRF52)  
+#elif defined(NRF52)
   /* nRF52832 feather w/wing */
   #define RFM95_RST     7   // "A"
   #define RFM95_CS      11   // "B"
   #define RFM95_INT     31   // "C"
-  
+
 #elif defined(TEENSYDUINO)
   /* Teensy 3.x w/wing */
   #define RFM95_RST     9   // "A"
@@ -50,13 +50,10 @@ RH_RF95 rf95(RFM95_CS, RFM95_INT);
 // Instance for Adafruit's Si7021 sensor
 Adafruit_Si7021 sensor = Adafruit_Si7021();
 
-unsigned long tf;
-unsigned long ti;
-float period;
 float temp;
 float humi;
 
-void setup() 
+void setup()
 {
   pinMode(RFM95_RST, OUTPUT);
   digitalWrite(RFM95_RST, HIGH);
@@ -92,19 +89,17 @@ void setup()
     while (1);
   }
   Serial.print("Set Freq to: "); Serial.println(RF95_FREQ);
-  
+
   // Defaults after init are 434.0MHz, 13dBm, Bw = 125 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on
 
   // The default transmitter power is 13dBm, using PA_BOOST.
-  // If you are using RFM95/96/97/98 modules which uses the PA_BOOST transmitter pin, then 
+  // If you are using RFM95/96/97/98 modules which uses the PA_BOOST transmitter pin, then
   // you can set transmitter powers from 5 to 23 dBm:
   rf95.setTxPower(23, false);
-
-  ti = 0;
 }
 
 //int16_t packetnum = 0;  // packet counter, we increment per xmission
-char radiopacket[30];
+char radiopacket[20];
 
 void loop()
 {
@@ -116,23 +111,14 @@ void loop()
   temp = sensor.readTemperature();
   humi = sensor.readHumidity();
 
-  // We compute the period between each measurement
-  tf = millis();
-  period = (float)(tf - ti) / 1000.;
-  Serial.println(period, 10);
-  ti = tf;
-  
   // Check if any reads failed and exit early (to try again).
   if (isnan(temp) || isnan(humi))
     {
     Serial.println("Failed to read from Si7021 sensor!");
     return;
     }
-  else 
+  else
     {
-    Serial.print("Period: ");
-    Serial.print(period);
-    Serial.print(" s\t");
     Serial.print("Temperature: ");
     Serial.print(temp);
     Serial.print(" %\t");
@@ -142,52 +128,47 @@ void loop()
     Serial.println("Transmitting..."); // Send a message to rf95_server
     }
 
-  // Define the buffer to hold (time) period data
-  char time_buff[6]; // in case times get to 100.00 i.e. 6 characters + 1 for NULL
   // Define the buffers to hold sensor data
   char temp_buff[7]; // because -10.00 takes 6 characters + 1 for NULL
   char humi_buff[7]; // because 100.00 takes 6 characters + 1 for NULL
 
   // Convert float to characters
-  dtostrf(period, 5, 2, time_buff);
   dtostrf(temp, 6, 2, temp_buff);
   dtostrf(humi, 6, 2, humi_buff);
   // Concatenate the data into the radiopacket char array
-  strcat(radiopacket, time_buff);
-  strcat(radiopacket, "\t");
   strcat(radiopacket, temp_buff);
   strcat(radiopacket, "\t");
   strcat(radiopacket, humi_buff);
   //itoa(packetnum++, radiopacket+13, 10);
   //radiopacket[19] = 0;
   Serial.print("Sending packet: "); Serial.println(radiopacket);
-  
-  
+
+
   Serial.println("Sending...");
   delay(10);
-  rf95.send((uint8_t *)radiopacket, 30);
+  rf95.send((uint8_t *)radiopacket, 20);
 
-  Serial.println("Waiting for packet to complete..."); 
+  Serial.println("Waiting for packet to complete...");
   delay(10);
   rf95.waitPacketSent();
 
   // Now we clear the char array
   strcpy(radiopacket, "");
-  
+
   // Now wait for a reply
   //uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
   //uint8_t len = sizeof(buf);
 
   //Serial.println("Waiting for reply...");
   //if (rf95.waitAvailableTimeout(1000))
-  //{ 
-  //  // Should be a reply message for us now   
+  //{
+  //  // Should be a reply message for us now
   //  if (rf95.recv(buf, &len))
   // {
   //    Serial.print("Got reply: ");
   //    Serial.println((char*)buf);
   //    Serial.print("RSSI: ");
-  //    Serial.println(rf95.lastRssi(), DEC);    
+  //    Serial.println(rf95.lastRssi(), DEC);
   //  }
   //  else
   //  {
