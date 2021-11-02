@@ -15,8 +15,8 @@ export route, html, up
 
 function load_data(path_to_datafile::Union{String, IOBuffer})
    header = ["rssi", "time", "temperature", "humidity"]
-   #data = CSV.read(path_to_datafile, header=header, delim="\t", DataFrame)
-   data = CSV.File(path_to_datafile, header=header, delim="\t") |> DataFrame
+   data = CSV.read(path_to_datafile, header=header, delim="\t", DataFrame)
+   #data = CSV.File(path_to_datafile, header=header, delim="\t") |> DataFrame
  end
 
 
