@@ -25,7 +25,7 @@ function parse_commandline()
 
 		"--baudrate", "-b"
 			help = "Baudrate. Default = 115200."
-			arg_type = Int64
+			arg_type = Int
 			required = false
 			default = 115200
 
