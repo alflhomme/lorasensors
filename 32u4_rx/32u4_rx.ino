@@ -142,17 +142,16 @@ void loop()
       ti = tf;
       
       //RH_RF95::printBuffer("Received: ", buf, len);
-      //Serial.print("Got: ");
-      // First column is the signal strength (RSSI)
-      Serial.print(rf95.lastRssi(), DEC);
-      Serial.print("\t");
-      // Second column is cumulative time in hours
-      Serial.print(cumulative_time, 5);
-      Serial.print("\t");
-      Serial.print((char*)buf);
-      Serial.print("\n");
-      //Serial.print("RSSI: ");
-      //Serial.println(rf95.lastRssi(), DEC);
+      
+      // First column is going to be the signal strength (RSSI)
+      String rssi = String(rf95.lastRssi(), DEC);
+      // Second column will be cumulative time
+      String cum_time = String(cumulative_time, 5);
+      // Then the packet we got from the radio 
+      String radiobuf = String((char*)buf);
+      Serial.print(rssi + "\t" + cum_time + "\t" + radiobuf + "\n");
+
+      
 
       // Send a reply
       //uint8_t data[] = "And hello back to you";
