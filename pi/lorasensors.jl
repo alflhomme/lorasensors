@@ -67,7 +67,7 @@ function main()
 	end
 
 	# Launch the webserver and open a browser window:
-	up(open_browser = true)
+	up()
 	############################################################################
 
 
