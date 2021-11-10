@@ -3,6 +3,7 @@ module DataPacket
 using LibSerialPort
 
 export open, write_data, retrieve_data
+export SP_MODE_READ
 
 
 function write_data(data::String, path_to_datafile::String)
