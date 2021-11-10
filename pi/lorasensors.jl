@@ -49,7 +49,7 @@ function main()
 	portname = parsed_args["portname"]
 
 	# Open a serial connection to the microcontroller
-	mcu = open(portname, baudrate; mode=SP_MODE_READ)
+	mcu = open(portname, baudrate; mode="SP_MODE_READ")
 
 	# Retrieve a first data packet to populate the datafile
 	datapacket = retrieve_data(mcu)
